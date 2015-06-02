@@ -4,6 +4,7 @@ import java.io.IOException;
 
 import android.app.Activity;
 import android.os.Bundle;
+import android.widget.Toast;
 
 public class MainActivity extends Activity 
 {
@@ -28,7 +29,8 @@ public class MainActivity extends Activity
 			catch (IOException e) 
 			{
 				// TODO Auto-generated catch block
-				e.printStackTrace();
+				Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+				//e.printStackTrace();
 			}
 		}
 		

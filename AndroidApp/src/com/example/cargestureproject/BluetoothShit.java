@@ -23,6 +23,7 @@ public class BluetoothShit// extends Activity
 	Context mContext;
 	
 	MusicControlShit musicControl;
+	PhoneControlShit phoneControl;
 	
 	InputStream mInputStream;
 	Thread workerThread;
@@ -101,6 +102,7 @@ public class BluetoothShit// extends Activity
 	    final byte delimiter = 10; //This is the ASCII code for a newline character
 
 	    musicControl = new MusicControlShit(mContext);
+	    phoneControl = new PhoneControlShit(mContext);
 	    
 	    stopWorker = false;
 	    readBufferPosition = 0;
