@@ -12,9 +12,9 @@ import android.util.Log;
 
 public class PhoneControlShit extends BroadcastReceiver
 {
-	public static String currentGesture = "NONE";
-	public static boolean inCall = false;
-	public static boolean incomingCall = false;
+	public String currentGesture = "NONE";
+	public boolean inCall = false;
+	public boolean incomingCall = false;
 	
 	public interface ITelephony
 	{
@@ -28,6 +28,7 @@ public class PhoneControlShit extends BroadcastReceiver
 	PhoneStateListener callStateListener;
 	TelephonyManager telephonyManager;
 	EndCallListener endCallListener;
+	ITelephony telephonyService;
 	
 	String number;
 
@@ -49,7 +50,7 @@ public class PhoneControlShit extends BroadcastReceiver
 	         Class<?> c = Class.forName(telephonyManager.getClass().getName());
 	         Method m = c.getDeclaredMethod("getITelephony");
 	         m.setAccessible(true);
-	         ITelephony telephonyService = (ITelephony) m.invoke(telephonyManager);
+	         telephonyService = (ITelephony) m.invoke(telephonyManager);
 	         Bundle bundle = intent.getExtras();
 	         String phoneNumber = bundle.getString("incoming_number");
 	         Log.e("INCOMING", phoneNumber);
@@ -80,6 +81,7 @@ public class PhoneControlShit extends BroadcastReceiver
 	    public void onCallStateChanged(int state, String incomingNumber) {
 	    	incomingCall = false;
 	    	inCall = false;
+	    	currentGesture = "NONE";
 	    }
 	}
 }

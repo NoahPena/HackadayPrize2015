@@ -137,16 +137,70 @@ public class BluetoothShit// extends Activity
 	                                    	switch(data.trim())
 	                                    	{
 	                                    	case "RIGHT":
-	                                    			musicControl.skipTrack();
+	                                    			if(phoneControl.inCall)
+	                                    			{
+	                                    				//nothing
+	                                    			}
+	                                    			else if(phoneControl.incomingCall)
+	                                    			{
+	                                    				phoneControl.currentGesture = "RIGHT";
+	                                    			}
+	                                    			else
+	                                    			{
+	                                    				musicControl.skipTrack();
+	                                    			}
 	                                    		break;
 	                                    		
 	                                    	case "LEFT":
-	                                    			musicControl.lastTrack();
+	                                    			if(phoneControl.inCall)
+	                                    			{
+	                                    				//nothing
+	                                    			}
+	                                    			else if(phoneControl.incomingCall)
+	                                    			{
+	                                    				phoneControl.currentGesture = "LEFT";
+	                                    			}
+	                                    			else
+	                                    			{
+	                                    				musicControl.lastTrack();
+	                                    			}
 	                                    		break;
 	                                    		
 	                                    	case "NEAR":
-	                                    			musicControl.pausePlayTrack();
+	                                    			if(phoneControl.inCall)
+	                                    			{
+	                                    				//nothing
+	                                    			}
+	                                    			else if(phoneControl.incomingCall)
+	                                    			{
+	                                    				//nothing
+	                                    			}
+	                                    			else
+	                                    			{
+	                                    				musicControl.pausePlayTrack();
+	                                    			}
 	                                    		break;
+	                                    		
+	                                    	case "DOWN":
+	                                    			if(phoneControl.inCall)
+	                                    			{
+	                                    				if(phoneControl.telephonyService != null)
+	                                    				{
+	                                    					phoneControl.telephonyService.endCall();
+	                                    				}
+	                                    				else
+	                                    				{
+	                                    					Toast.makeText(mContext, "ERROR", Toast.LENGTH_LONG).show();
+	                                    				}
+	                                    			}
+	                                    			else if(phoneControl.incomingCall)
+	                                    			{
+	                                    				//nothing
+	                                    			}
+	                                    			else
+	                                    			{
+	                                    				//nothing
+	                                    			}
 	                                    			
 	                                    		
 	                                    	default:
