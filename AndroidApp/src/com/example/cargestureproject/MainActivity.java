@@ -7,6 +7,7 @@ import android.os.Bundle;
 
 public class MainActivity extends Activity 
 {
+	BluetoothShit bluetooth;
 	
 	@Override
 	protected void onCreate(Bundle savedInstanceState) 
@@ -14,7 +15,7 @@ public class MainActivity extends Activity
 		super.onCreate(savedInstanceState);
 		setContentView(R.layout.activity_main);
 	
-		BluetoothShit bluetooth = new BluetoothShit();
+		bluetooth = new BluetoothShit(getApplicationContext());
 		
 		if(bluetooth.bluetoothOn())
 		{

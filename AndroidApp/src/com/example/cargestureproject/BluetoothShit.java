@@ -5,20 +5,24 @@ import java.io.InputStream;
 import java.util.Set;
 import java.util.UUID;
 
-import android.app.Activity;
 import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
+import android.content.Context;
 import android.os.Handler;
 import android.widget.Toast;
 
-public class BluetoothShit extends Activity
+public class BluetoothShit// extends Activity
 {
 	private static final String DEVICE_NAME = "Car-Gesture";
 	
 	BluetoothAdapter mBluetoothAdapter;
 	BluetoothDevice mBluetoothDevice;
 	BluetoothSocket mBluetoothSocket;
+	
+	Context mContext;
+	
+	MusicControlShit musicControl;
 	
 	InputStream mInputStream;
 	Thread workerThread;
@@ -29,9 +33,11 @@ public class BluetoothShit extends Activity
 	
 	boolean bluetoothEnabled = false;
 	
-	public BluetoothShit()
+	public BluetoothShit(Context context)
 	{
 		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		
+		mContext = context;
 		
 		bluetoothEnabled = false;
 	}
@@ -51,7 +57,7 @@ public class BluetoothShit extends Activity
 			if(!mBluetoothAdapter.isEnabled())
 			{
 				mBluetoothAdapter.enable();
-				Toast.makeText(getApplicationContext(), "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
 			}
 		}
 		
@@ -69,7 +75,7 @@ public class BluetoothShit extends Activity
 			if(!mBluetoothAdapter.isEnabled())
 			{
 				mBluetoothAdapter.disable();
-				Toast.makeText(getApplicationContext(), "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
+				Toast.makeText(mContext, "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
 			}
 		}
 			
@@ -86,7 +92,7 @@ public class BluetoothShit extends Activity
 
 	    beginListenForData();
 
-	    Toast.makeText(getApplicationContext(), "Bluetooth Opened", Toast.LENGTH_LONG).show();
+	    Toast.makeText(mContext, "Bluetooth Opened", Toast.LENGTH_LONG).show();
 	}
 	
 	void beginListenForData()
@@ -94,6 +100,8 @@ public class BluetoothShit extends Activity
 	    final Handler handler = new Handler(); 
 	    final byte delimiter = 10; //This is the ASCII code for a newline character
 
+	    musicControl = new MusicControlShit(mContext);
+	    
 	    stopWorker = false;
 	    readBufferPosition = 0;
 	    readBuffer = new byte[1024];
@@ -124,7 +132,25 @@ public class BluetoothShit extends Activity
 	                                {
 	                                    public void run()
 	                                    {
-	                                    	Toast.makeText(getApplicationContext(), data, Toast.LENGTH_SHORT).show();
+	                                    	switch(data.trim())
+	                                    	{
+	                                    	case "RIGHT":
+	                                    			musicControl.skipTrack();
+	                                    		break;
+	                                    		
+	                                    	case "LEFT":
+	                                    			musicControl.lastTrack();
+	                                    		break;
+	                                    		
+	                                    	case "NEAR":
+	                                    			musicControl.pausePlayTrack();
+	                                    		break;
+	                                    			
+	                                    		
+	                                    	default:
+	                                    		Toast.makeText(mContext, data, Toast.LENGTH_SHORT).show();
+	                                    		break;
+	                                    	}
 	                                    }
 	                                });
 	                            }
@@ -161,7 +187,7 @@ public class BluetoothShit extends Activity
 				if(DEVICE_NAME.equals(device.getName()))
 				{
 					mBluetoothDevice = device;
-					Toast.makeText(getApplicationContext(), device.getName() + " connected!", Toast.LENGTH_LONG).show();
+					Toast.makeText(mContext, device.getName() + " connected!", Toast.LENGTH_LONG).show();
 					break;
 				}
 			}
