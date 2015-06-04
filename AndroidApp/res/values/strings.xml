@@ -3,5 +3,6 @@
 
     <string name="app_name">Car Gesture Project</string>
     <string name="hello_world">Hello world!</string>
+    <string name="button_quit">Press Here To Quit</string>
 
 </resources>

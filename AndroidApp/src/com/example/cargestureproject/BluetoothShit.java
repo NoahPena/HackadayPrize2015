@@ -58,6 +58,7 @@ public class BluetoothShit// extends Activity
 			if(!mBluetoothAdapter.isEnabled())
 			{
 				mBluetoothAdapter.enable();
+				while(!mBluetoothAdapter.isEnabled());
 				Toast.makeText(mContext, "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -67,18 +68,18 @@ public class BluetoothShit// extends Activity
 	
 	public boolean bluetoothOff()
 	{
-		if((mBluetoothAdapter == null) || (!bluetoothEnabled))
-		{
-			return false;
-		}
-		else
-		{
-			if(!mBluetoothAdapter.isEnabled())
-			{
+		//if((mBluetoothAdapter == null) || (!bluetoothEnabled))
+		//{
+		//	return false;
+		//}
+		//else
+		//{
+		//	if(!mBluetoothAdapter.isEnabled())
+		//	{
 				mBluetoothAdapter.disable();
 				Toast.makeText(mContext, "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
-			}
-		}
+		//	}
+		//}
 			
 		return true;
 	}
@@ -228,28 +229,40 @@ public class BluetoothShit// extends Activity
 	    workerThread.start();
 	}
 	
-	public void searchDevice()
+	public boolean searchDevice()
 	{
 		mBluetoothAdapter.startDiscovery();
+		
+		int counter = 1000;
 		
 		Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
 		//String names = null;
 		
-		if (devices != null)
+		while(mBluetoothDevice == null || !mBluetoothDevice.getName().equals(DEVICE_NAME))
 		{
-			for (BluetoothDevice device : devices)
+			counter--;
+			if(counter <= 0)
 			{
-				//names += "\n" + device.getName();
-				if(DEVICE_NAME.equals(device.getName()))
+				Toast.makeText(mContext, "Can't find " + DEVICE_NAME, Toast.LENGTH_LONG).show();
+				return false;
+			}
+			if (devices != null)
+			{
+				for (BluetoothDevice device : devices)
 				{
-					mBluetoothDevice = device;
-					Toast.makeText(mContext, device.getName() + " connected!", Toast.LENGTH_LONG).show();
-					break;
+					//names += "\n" + device.getName();
+					if(DEVICE_NAME.equals(device.getName()))
+					{
+						mBluetoothDevice = device;
+						Toast.makeText(mContext, device.getName() + " connected!", Toast.LENGTH_LONG).show();
+						break;
+					}
 				}
 			}
 		}
 				
 		mBluetoothAdapter.cancelDiscovery();
+		return true;
 	}
 	
 	
