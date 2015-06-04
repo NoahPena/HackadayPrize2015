@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">Car Gesture Application</string>
+    <string name="button_quit">Click Here To Quit</string>
+</resources>
