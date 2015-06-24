@@ -208,10 +208,12 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         {
             if(GlobalVariables.useSpotify)
             {
+                GlobalVariables.mPlayer.pause();
                 GlobalVariables.useSpotify = false;
             }
             else
             {
+                GlobalVariables.mPlayer.resume();
                 GlobalVariables.useSpotify = true;
             }
         }
