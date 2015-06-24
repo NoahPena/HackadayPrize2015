@@ -48,6 +48,14 @@ public class MusicControlShit
 	}
 
 
+	public void nextPlaylist()
+	{
+		if(GlobalVariables.useSpotify)
+		{
+			GlobalVariables.nextPlaylist();
+			GlobalVariables.mPlayer.play(GlobalVariables.playlists.items.get(GlobalVariables.counter).uri);
+		}
+	}
 
 	public void pausePlayTrack()
 	{

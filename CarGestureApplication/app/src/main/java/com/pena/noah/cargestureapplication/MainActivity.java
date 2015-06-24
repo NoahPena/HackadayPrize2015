@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.MediaStore;
 import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
@@ -14,7 +15,6 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.Toast;
 
-//import com.example.cargestureproject.R;
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
 import com.spotify.sdk.android.authentication.AuthenticationRequest;
@@ -26,11 +26,31 @@ import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 import com.spotify.sdk.android.player.PlayConfig;
 
+import org.apache.http.Header;
+import org.apache.http.HeaderElement;
+import org.apache.http.NameValuePair;
+import org.apache.http.ParseException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.client.methods.HttpPost;
+import org.apache.http.impl.client.DefaultHttpClient;
+
+import kaaes.spotify.webapi.android.SpotifyApi;
+import kaaes.spotify.webapi.android.SpotifyService;
+import kaaes.spotify.webapi.android.models.Pager;
+import kaaes.spotify.webapi.android.models.Playlist;
+import kaaes.spotify.webapi.android.models.PlaylistSimple;
+import kaaes.spotify.webapi.android.models.UserPrivate;
+import retrofit.Callback;
+import retrofit.RetrofitError;
+import retrofit.client.Response;
+
 public class MainActivity extends Activity implements OnClickListener, PlayerNotificationCallback, ConnectionStateCallback
 {
     BluetoothShit bluetooth;
 
     Button quitButton;
+    Button switchButton;
 
     private static final String CLIENT_ID = "ea003cf31ff442b09e9be3534cb76499";
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
@@ -45,6 +65,7 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         setContentView(R.layout.activity_main);
 
         quitButton = (Button)findViewById(R.id.quitButton);
+        switchButton = (Button)findViewById(R.id.switchButton);
 
         try
         {
@@ -71,20 +92,51 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
         // Check if result comes from the correct activity
         if (requestCode == REQUEST_CODE) {
-            AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
+            final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
-                Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
+                final Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
                 mPlayer = Spotify.getPlayer(playerConfig, this, new Player.InitializationObserver() {
                     @Override
                     public void onInitialized(Player player)
                     {
                         mPlayer.addConnectionStateCallback(MainActivity.this);
                         mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                        mPlayer.play("spotify:user:1255218042:playlist:3AFfiVdHxZoqVlS6x7KIgl");
+                       // mPlayer.play("spotify:user:1255218042:playlist:3AFfiVdHxZoqVlS6x7KIgl");
+
+                        //String userID = "1255218042";
+
+                        //String authToken = "BQBxLmj2iP5kCOODeP28Ra0O1bdgUnGCR29hVDGGeijaSJ_7bZYANRa2fc3aTM3IfQXoguA1ezJqoyTZvuHjcxCm2hq3QIUc73Z89o_VA3NBcoMXzrW";
+
+                        SpotifyApi api = new SpotifyApi();
+
+                        api.setAccessToken(response.getAccessToken());
+
+                        GlobalVariables.spotifyService = api.getService();
+
+
+                        GlobalVariables.spotifyService.getMe(new Callback<UserPrivate>() {
+                            @Override
+                            public void success(UserPrivate userPrivate, Response response) {
+                                GlobalVariables.user = userPrivate;
+                                Toast.makeText(getApplicationContext(), GlobalVariables.user.id, Toast.LENGTH_LONG).show();
+
+                                GlobalVariables.getUserPlaylists();
+
+                                GlobalVariables.isPlaying = true;
+
+                                Log.d("Debug", "jajajajajajaja");
+                            }
+
+                            @Override
+                            public void failure(RetrofitError error) {
+                                Log.d("Debug", "nein nein nein nein nein");
+                            }
+                        });
+
 
 
                         GlobalVariables.mPlayer = mPlayer;
-                        GlobalVariables.isPlaying = true;
+
                         GlobalVariables.useSpotify = true;
                     }
 
@@ -103,13 +155,13 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     @Override
     public void onLoggedIn()
     {
-        Toast.makeText(getApplicationContext(), "User Logged In", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "User Logged In", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onLoggedOut()
     {
-        Toast.makeText(getApplicationContext(), "User Logged Out", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "User Logged Out", Toast.LENGTH_LONG).show();
     }
 
     @Override
@@ -121,25 +173,25 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     @Override
     public void onTemporaryError()
     {
-        Toast.makeText(getApplicationContext(), "Temporary Error Occured", Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Temporary Error Occured", Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onConnectionMessage(String message)
     {
-        Toast.makeText(getApplicationContext(), "Received connection message: " + message, Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Received connection message: " + message, Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPlaybackEvent(EventType eventType, PlayerState playerState)
     {
-        Toast.makeText(getApplicationContext(), "Playback event received: " + eventType.name(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Playback event received: " + eventType.name(), Toast.LENGTH_LONG).show();
     }
 
     @Override
     public void onPlaybackError(ErrorType errorType, String errorDetails)
     {
-        Toast.makeText(getApplicationContext(), "Playback error received: " + errorType.name(), Toast.LENGTH_LONG).show();
+        //Toast.makeText(getApplicationContext(), "Playback error received: " + errorType.name(), Toast.LENGTH_LONG).show();
     }
 
     public void onClick(View v)
@@ -150,6 +202,17 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
             {
                 finish();
                 System.exit(0);
+            }
+        }
+        else if(v.getId() == R.id.switchButton)
+        {
+            if(GlobalVariables.useSpotify)
+            {
+                GlobalVariables.useSpotify = false;
+            }
+            else
+            {
+                GlobalVariables.useSpotify = true;
             }
         }
     }
@@ -187,7 +250,17 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     @Override
     protected void onDestroy()
     {
-
+        if(GlobalVariables.mBluetoothSocket.isConnected())
+        {
+            try
+            {
+                GlobalVariables.mBluetoothSocket.close();
+            }
+            catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
+            }
+        }
     }
 
 

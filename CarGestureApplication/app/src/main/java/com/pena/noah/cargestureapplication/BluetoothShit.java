@@ -50,7 +50,7 @@ public class BluetoothShit// extends Activity
 	
 	public BluetoothShit(Context context, Activity activity)
 	{
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		GlobalVariables.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		
 		mContext = context;
 		mActivity = activity;
@@ -60,7 +60,7 @@ public class BluetoothShit// extends Activity
 
 	public BluetoothShit(Context context, Activity activity, Player player)
 	{
-		mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		GlobalVariables.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 
 		mContext = context;
 		mActivity = activity;
@@ -72,20 +72,20 @@ public class BluetoothShit// extends Activity
 
 	public boolean bluetoothOn()
 	{
-		//mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
+		//GlobalVariables.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
 		
 		bluetoothEnabled = true;
 		
-		if(mBluetoothAdapter == null)
+		if(GlobalVariables.mBluetoothAdapter == null)
 		{
 			return false;
 		}
 		else
 		{
-			if(!mBluetoothAdapter.isEnabled())
+			if(!GlobalVariables.mBluetoothAdapter.isEnabled())
 			{
-				mBluetoothAdapter.enable();
-				while(!mBluetoothAdapter.isEnabled());
+				GlobalVariables.mBluetoothAdapter.enable();
+				while(!GlobalVariables.mBluetoothAdapter.isEnabled());
 				Toast.makeText(mContext, "Bluetooth Enabled", Toast.LENGTH_SHORT).show();
 			}
 		}
@@ -95,15 +95,15 @@ public class BluetoothShit// extends Activity
 	
 	public boolean bluetoothOff()
 	{
-		//if((mBluetoothAdapter == null) || (!bluetoothEnabled))
+		//if((GlobalVariables.mBluetoothAdapter == null) || (!bluetoothEnabled))
 		//{
 		//	return false;
 		//}
 		//else
 		//{
-		//	if(!mBluetoothAdapter.isEnabled())
+		//	if(!GlobalVariables.mBluetoothAdapter.isEnabled())
 		//	{
-				mBluetoothAdapter.disable();
+				GlobalVariables.mBluetoothAdapter.disable();
 				Toast.makeText(mContext, "Bluetooth Disabled", Toast.LENGTH_SHORT).show();
 		//	}
 		//}
@@ -114,15 +114,15 @@ public class BluetoothShit// extends Activity
 	void openBT() throws IOException
 	{
 	    UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-	    mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);
-		if(mBluetoothSocket.isConnected())
+	    GlobalVariables.mBluetoothSocket = GlobalVariables.mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+		if(GlobalVariables.mBluetoothSocket.isConnected())
 		{
-			mBluetoothSocket.close();
+			GlobalVariables.mBluetoothSocket.close();
 		}
-		//mBluetoothSocket.close();
-	    mBluetoothSocket.connect();
+		//GlobalVariables.mBluetoothSocket.close();
+	    GlobalVariables.mBluetoothSocket.connect();
 	    
-	    mInputStream = mBluetoothSocket.getInputStream();
+	    mInputStream = GlobalVariables.mBluetoothSocket.getInputStream();
 
 	    beginListenForData();
 
@@ -234,6 +234,12 @@ public class BluetoothShit// extends Activity
 	                                    			{
 	                                    				//nothing
 	                                    			}
+											break;
+
+											case "UP":
+												musicControl.nextPlaylist();
+												break;
+
 	                                    			
 	                                    		
 	                                    	default:
@@ -263,14 +269,14 @@ public class BluetoothShit// extends Activity
 	
 	public boolean searchDevice()
 	{
-		mBluetoothAdapter.startDiscovery();
+		GlobalVariables.mBluetoothAdapter.startDiscovery();
 		
 		int counter = 1000;
 		
-		Set<BluetoothDevice> devices = mBluetoothAdapter.getBondedDevices();
+		Set<BluetoothDevice> devices = GlobalVariables.mBluetoothAdapter.getBondedDevices();
 		//String names = null;
 		
-		while(mBluetoothDevice == null || !mBluetoothDevice.getName().equals(DEVICE_NAME))
+		while(GlobalVariables.mBluetoothDevice == null || !GlobalVariables.mBluetoothDevice.getName().equals(DEVICE_NAME))
 		{
 			counter--;
 			if(counter <= 0)
@@ -285,7 +291,7 @@ public class BluetoothShit// extends Activity
 					//names += "\n" + device.getName();
 					if(DEVICE_NAME.equals(device.getName()))
 					{
-						mBluetoothDevice = device;
+						GlobalVariables.mBluetoothDevice = device;
 						Toast.makeText(mContext, device.getName() + " connected!", Toast.LENGTH_LONG).show();
 						break;
 					}
@@ -293,7 +299,7 @@ public class BluetoothShit// extends Activity
 			}
 		}
 				
-		mBluetoothAdapter.cancelDiscovery();
+		GlobalVariables.mBluetoothAdapter.cancelDiscovery();
 		return true;
 	}
 	

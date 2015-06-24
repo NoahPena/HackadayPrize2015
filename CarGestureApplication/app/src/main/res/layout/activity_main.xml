@@ -17,4 +17,14 @@
         android:layout_centerHorizontal="true"
         android:onClick="onClick"/>
 
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Switch Player"
+        android:id="@+id/switchButton"
+        android:layout_above="@+id/quitButton"
+        android:layout_centerHorizontal="true"
+        android:layout_marginBottom="48dp"
+        android:onClick="onClick"/>
+
 </RelativeLayout>
