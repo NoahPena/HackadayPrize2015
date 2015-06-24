@@ -7,6 +7,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Debug;
+import android.provider.Settings;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -79,7 +80,12 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                     {
                         mPlayer.addConnectionStateCallback(MainActivity.this);
                         mPlayer.addPlayerNotificationCallback(MainActivity.this);
-                        mPlayer.play("spotify:track:2TpxZ7JUBn3uw46aR7qd6V");
+                        mPlayer.play("spotify:user:1255218042:playlist:3AFfiVdHxZoqVlS6x7KIgl");
+
+
+                        GlobalVariables.mPlayer = mPlayer;
+                        GlobalVariables.isPlaying = true;
+                        GlobalVariables.useSpotify = true;
                     }
 
                     @Override
@@ -152,6 +158,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
     public boolean startBluetoothShit()
     {
+        GlobalVariables.mContext = getApplicationContext();
+        GlobalVariables.mActivity = this;
         bluetooth = new BluetoothShit(getApplicationContext(), this, mPlayer);
 
         if(bluetooth.bluetoothOn())
@@ -174,6 +182,12 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         }
 
         return true;
+    }
+
+    @Override
+    protected void onDestroy()
+    {
+
     }
 
 

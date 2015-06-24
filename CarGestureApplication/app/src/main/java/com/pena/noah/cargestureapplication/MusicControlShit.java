@@ -45,33 +45,23 @@ public class MusicControlShit
 
 		mPlayer = player;
 
-		if(mPlayer != null)
-		{
-			useSpotify = true;
-			currentPlaying = true;
-		}
-		else
-		{
-			useSpotify = false;
-			currentPlaying = false;
-		}
 	}
 
 
 
 	public void pausePlayTrack()
 	{
-		if(useSpotify)
+		if(GlobalVariables.useSpotify)
 		{
-			if(currentPlaying)
+			if(GlobalVariables.isPlaying)
 			{
-				currentPlaying = false;
-				mPlayer.pause();
+				GlobalVariables.isPlaying = false;
+				GlobalVariables.mPlayer.pause();
 			}
 			else
 			{
-				currentPlaying = true;
-				mPlayer.resume();
+				GlobalVariables.isPlaying = true;
+				GlobalVariables.mPlayer.resume();
 			}
 		}
 		else
@@ -90,9 +80,9 @@ public class MusicControlShit
 	
 	public void pauseTrack()
 	{
-		if(useSpotify)
+		if(GlobalVariables.useSpotify)
 		{
-			mPlayer.pause();
+			GlobalVariables.mPlayer.pause();
 		}
 		else
 		{
@@ -111,9 +101,9 @@ public class MusicControlShit
 	public void skipTrack()
 	{
 		//Toast.makeText(mContext, "We tried", Toast.LENGTH_SHORT).show();
-		if(useSpotify)
+		if(GlobalVariables.useSpotify)
 		{
-			mPlayer.skipToNext();
+			GlobalVariables.mPlayer.skipToNext();
 		}
 		else
 		{
@@ -132,9 +122,9 @@ public class MusicControlShit
 	public void lastTrack()
 	{
 		//Toast.makeText(context, text, duration)
-		if(useSpotify)
+		if(GlobalVariables.useSpotify)
 		{
-			mPlayer.skipToPrevious();
+			GlobalVariables.mPlayer.skipToPrevious();
 		}
 		else
 		{

@@ -114,7 +114,12 @@ public class BluetoothShit// extends Activity
 	void openBT() throws IOException
 	{
 	    UUID uuid = UUID.fromString("00001101-0000-1000-8000-00805F9B34FB"); //Standard SerialPortService ID
-	    mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);        
+	    mBluetoothSocket = mBluetoothDevice.createRfcommSocketToServiceRecord(uuid);
+		if(mBluetoothSocket.isConnected())
+		{
+			mBluetoothSocket.close();
+		}
+		//mBluetoothSocket.close();
 	    mBluetoothSocket.connect();
 	    
 	    mInputStream = mBluetoothSocket.getInputStream();
