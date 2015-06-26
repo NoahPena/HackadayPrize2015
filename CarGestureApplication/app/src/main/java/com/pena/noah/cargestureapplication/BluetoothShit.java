@@ -182,13 +182,14 @@ public class BluetoothShit// extends Activity
 	                                    			else
 	                                    			{
 	                                    				musicControl.skipTrack();
+														Toast.makeText(mContext, "Skip Track", Toast.LENGTH_SHORT).show();
 	                                    			}
 	                                    		break;
 	                                    		
 	                                    	case "LEFT":
 	                                    			if(GlobalVariables.inCall)
 	                                    			{
-	                                    				//nothing
+	                                    				phoneControl.killCall(mContext);
 	                                    			}
 	                                    			else if(GlobalVariables.incomingCall)
 	                                    			{
@@ -198,6 +199,7 @@ public class BluetoothShit// extends Activity
 	                                    			else
 	                                    			{
 	                                    				musicControl.lastTrack();
+														Toast.makeText(mContext, "Last Track", Toast.LENGTH_SHORT).show();
 	                                    			}
 	                                    		break;
 	                                    		
@@ -213,6 +215,8 @@ public class BluetoothShit// extends Activity
 	                                    			else
 	                                    			{
 	                                    				musicControl.pausePlayTrack();
+														Toast.makeText(mContext, "Pause/Play Track", Toast.LENGTH_SHORT).show();
+
 	                                    			}
 	                                    		break;
 	                                    		
@@ -240,6 +244,7 @@ public class BluetoothShit// extends Activity
 
 											case "UP":
 												musicControl.nextPlaylist();
+												Toast.makeText(mContext, "Next Playlist", Toast.LENGTH_SHORT).show();
 												break;
 
 	                                    			

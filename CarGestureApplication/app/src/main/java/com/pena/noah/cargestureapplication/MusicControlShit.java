@@ -17,6 +17,8 @@ import com.spotify.sdk.android.player.Player;
 import com.spotify.sdk.android.player.PlayerNotificationCallback;
 import com.spotify.sdk.android.player.PlayerState;
 
+import java.security.Key;
+
 
 public class MusicControlShit
 {
@@ -85,11 +87,34 @@ public class MusicControlShit
 			}
 		}
 	}
+
+	public void resumeTrack()
+	{
+		if(GlobalVariables.useSpotify)
+		{
+			GlobalVariables.isPlaying = true;
+			GlobalVariables.mPlayer.resume();
+		}
+		else
+		{
+			Intent i = new Intent(Intent.ACTION_MEDIA_BUTTON);
+
+			synchronized (this)
+			{
+				i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_DOWN, KeyEvent.KEYCODE_MEDIA_PLAY));
+				mContext.sendOrderedBroadcast(i, null);
+
+				i.putExtra(Intent.EXTRA_KEY_EVENT, new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_MEDIA_PLAY));
+				mContext.sendOrderedBroadcast(i, null);
+			}
+		}
+	}
 	
 	public void pauseTrack()
 	{
 		if(GlobalVariables.useSpotify)
 		{
+			GlobalVariables.isPlaying = false;
 			GlobalVariables.mPlayer.pause();
 		}
 		else

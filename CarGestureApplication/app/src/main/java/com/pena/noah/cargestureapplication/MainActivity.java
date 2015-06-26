@@ -2,6 +2,7 @@ package com.pena.noah.cargestureapplication;
 
 import java.io.IOException;
 import java.util.List;
+import java.util.Locale;
 
 import android.app.Activity;
 import android.content.Intent;
@@ -9,6 +10,7 @@ import android.os.Bundle;
 import android.os.Debug;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.speech.tts.TextToSpeech;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -66,6 +68,17 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
         quitButton = (Button)findViewById(R.id.quitButton);
         switchButton = (Button)findViewById(R.id.switchButton);
+
+        GlobalVariables.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if(status != TextToSpeech.ERROR) {
+                    GlobalVariables.textToSpeech.setLanguage(Locale.US);
+
+
+                }
+            }
+        });
 
         try
         {
@@ -208,13 +221,23 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         {
             if(GlobalVariables.useSpotify)
             {
-                GlobalVariables.mPlayer.pause();
+                MusicControlShit musicControl = new MusicControlShit(getApplicationContext(), this);
+                musicControl.pausePlayTrack();
+
+                //GlobalVariables.mPlayer.pause();
                 GlobalVariables.useSpotify = false;
+
+                musicControl.pausePlayTrack();
             }
             else
             {
-                GlobalVariables.mPlayer.resume();
+                MusicControlShit musicControl = new MusicControlShit(getApplicationContext(), this);
+                musicControl.pausePlayTrack();
+
+                //GlobalVariables.mPlayer.resume();
                 GlobalVariables.useSpotify = true;
+
+                musicControl.pausePlayTrack();
             }
         }
     }

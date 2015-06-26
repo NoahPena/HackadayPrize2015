@@ -5,6 +5,7 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.speech.tts.TextToSpeech;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -98,4 +99,5 @@ public class GlobalVariables
     static TelephonyManager telephoneManager = null;
     static boolean inCall = false;
     static boolean incomingCall = false;
+    static TextToSpeech textToSpeech = null;
 }
