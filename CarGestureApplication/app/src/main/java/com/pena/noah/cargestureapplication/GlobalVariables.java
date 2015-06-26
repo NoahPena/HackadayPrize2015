@@ -5,7 +5,9 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
 import com.spotify.sdk.android.player.Spotify;
 import com.spotify.sdk.android.authentication.AuthenticationClient;
@@ -51,7 +53,7 @@ public class GlobalVariables
 
     public static void nextPlaylist()
     {
-        if(counter > playlists.items.size())
+        if(counter >= playlists.items.size() - 1)
         {
             counter = 0;
         }
@@ -59,6 +61,11 @@ public class GlobalVariables
         {
             counter++;
         }
+
+        Log.d("Debug", "Current Counter: " + counter);
+      //  Toast.makeText(mContext, "Current Counter: " + counter + "\nSize: " + playlists.items.size(), Toast.LENGTH_SHORT).show();
+       // Log.d("Debug", "Size: " + playlists.items.size());
+
     }
 
     public static void getUserPlaylists()
@@ -87,4 +94,8 @@ public class GlobalVariables
     static BluetoothDevice mBluetoothDevice = null;
     static BluetoothSocket mBluetoothSocket = null;
 
+    //Phone Stuff
+    static TelephonyManager telephoneManager = null;
+    static boolean inCall = false;
+    static boolean incomingCall = false;
 }

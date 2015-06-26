@@ -170,13 +170,14 @@ public class BluetoothShit// extends Activity
 	                                    	switch(data.trim())
 	                                    	{
 	                                    	case "RIGHT":
-	                                    			if(phoneControl.inCall)
+	                                    			if(GlobalVariables.inCall)
 	                                    			{
 	                                    				//nothing
 	                                    			}
-	                                    			else if(phoneControl.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall)
 	                                    			{
-	                                    				phoneControl.currentGesture = "RIGHT";
+														phoneControl.answerCall(mContext);
+	                                    				//phoneControl.currentGesture = "RIGHT";
 	                                    			}
 	                                    			else
 	                                    			{
@@ -185,13 +186,14 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "LEFT":
-	                                    			if(phoneControl.inCall)
+	                                    			if(GlobalVariables.inCall)
 	                                    			{
 	                                    				//nothing
 	                                    			}
-	                                    			else if(phoneControl.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall)
 	                                    			{
-	                                    				phoneControl.currentGesture = "LEFT";
+														phoneControl.killCall(mContext);
+	                                    				//phoneControl.currentGesture = "LEFT";
 	                                    			}
 	                                    			else
 	                                    			{
@@ -200,11 +202,11 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "NEAR":
-	                                    			if(phoneControl.inCall)
+	                                    			if(GlobalVariables.inCall)
 	                                    			{
 	                                    				//nothing
 	                                    			}
-	                                    			else if(phoneControl.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall)
 	                                    			{
 	                                    				//nothing
 	                                    			}
@@ -215,18 +217,18 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "DOWN":
-	                                    			if(phoneControl.inCall)
+	                                    			if(GlobalVariables.inCall)
 	                                    			{
-	                                    				if(phoneControl.telephonyService != null)
+	                                    				if(GlobalVariables.telephoneManager != null)
 	                                    				{
-	                                    					phoneControl.telephonyService.endCall();
+	                                    					phoneControl.killCall(mContext);
 	                                    				}
 	                                    				else
 	                                    				{
 	                                    					Toast.makeText(mContext, "ERROR", Toast.LENGTH_LONG).show();
 	                                    				}
 	                                    			}
-	                                    			else if(phoneControl.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall)
 	                                    			{
 	                                    				//nothing
 	                                    			}

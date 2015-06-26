@@ -6,6 +6,14 @@
     <uses-permission android:name="android.permission.BLUETOOTH_ADMIN"></uses-permission>
     <uses-permission android:name="android.permission.READ_PHONE_STATE"></uses-permission>
     <uses-permission android:name="android.permission.INTERNET"></uses-permission>
+    <uses-permission android:name="android.permission.CALL_PHONE"></uses-permission>
+
+    <receiver android:name=".PhoneStateReceiver">
+        <intent-filter android:priority="0">
+            <action android:name="android.intent.action.PHONE_STATE" />
+            <action android:name="android.intent.action.NEW_OUTGOING_CALL" />
+        </intent-filter>
+    </receiver>
 
     <application
         android:allowBackup="true"

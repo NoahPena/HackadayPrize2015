@@ -10,81 +10,144 @@ import android.os.Bundle;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
+import android.widget.Toast;
 
-public class PhoneControlShit extends BroadcastReceiver
+public class PhoneControlShit
 {
 	public String currentGesture = "NONE";
-	public boolean inCall = false;
-	public boolean incomingCall = false;
-	
-	public interface ITelephony
-	{
-		boolean endCall();
-		void answerRingingCall();
-		void silenceRinger();
-	}
-	
+
 	Context mContext;
 	Activity mActivity;
-	
-	PhoneStateListener callStateListener;
-	TelephonyManager telephonyManager;
-	EndCallListener endCallListener;
-	ITelephony telephonyService;
-	
-	String number;
+
+	MusicControlShit musicControl;
 
 	public PhoneControlShit(Context context, Activity activity)
 	{
 		mContext = context;
 		mActivity = activity;
-		
-		endCallListener = new EndCallListener();
-		telephonyManager = (TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
-		telephonyManager.listen(endCallListener, PhoneStateListener.LISTEN_CALL_STATE);
+
+		musicControl = new MusicControlShit(mContext, mActivity);
+
+		GlobalVariables.telephoneManager = (TelephonyManager)mActivity.getSystemService(Context.TELEPHONY_SERVICE);
+		GlobalVariables.telephoneManager.listen(new TeleListener(), PhoneStateListener.LISTEN_CALL_STATE);
+
 	}
 
-	@Override
-	public void onReceive(Context context, Intent intent) {
-		// TODO Auto-generated method stub
-		incomingCall = true;
-		
-	       try {
-	         Class<?> c = Class.forName(telephonyManager.getClass().getName());
-	         Method m = c.getDeclaredMethod("getITelephony");
-	         m.setAccessible(true);
-	         telephonyService = (ITelephony) m.invoke(telephonyManager);
-	         Bundle bundle = intent.getExtras();
-	         String phoneNumber = bundle.getString("incoming_number");
-	         Log.e("INCOMING", phoneNumber);
-	         if ((phoneNumber != null) && currentGesture.equalsIgnoreCase("LEFT")) 
-	         {
-	        	incomingCall = false;
-	        	inCall = false;
-	            telephonyService.silenceRinger();
-	            telephonyService.endCall();
-	            Log.e("HANG UP", phoneNumber);
-	         }
-	         else if((phoneNumber != null) && currentGesture.equalsIgnoreCase("RIGHT"))
-	         {
-	        	 incomingCall = false;
-	        	 inCall = true;
-	        	 telephonyService.silenceRinger();
-	        	 telephonyService.answerRingingCall();
-	        	 Log.e("ANSWERED", phoneNumber);
-	         }
+	public boolean killCall(Context context)
+	{
+		try
+		{
+			// Get the boring old TelephonyManager
+			TelephonyManager telephonyManager =
+					(TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
 
-	       } catch (Exception e) {
-	         e.printStackTrace();
-	       }
+			// Get the getITelephony() method
+			Class classTelephony = Class.forName(telephonyManager.getClass().getName());
+			Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
+
+			// Ignore that the method is supposed to be private
+			methodGetITelephony.setAccessible(true);
+
+			// Invoke getITelephony() to get the ITelephony interface
+			Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
+
+			// Get the endCall method from ITelephony
+			Class telephonyInterfaceClass =
+					Class.forName(telephonyInterface.getClass().getName());
+			Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("endCall");
+
+			// Invoke endCall()
+			methodEndCall.invoke(telephonyInterface);
+
+			GlobalVariables.incomingCall = false;
+			GlobalVariables.inCall = false;
+
+		}
+		catch (Exception ex)
+		{
+			// Many things can go wrong with reflection calls
+			Log.d("DEBUG","PhoneStateReceiver **" + ex.toString());
+			return false;
+		}
+		musicControl.pausePlayTrack();
+
+		return true;
 	}
-	
-	private class EndCallListener extends PhoneStateListener {
-	    @Override
-	    public void onCallStateChanged(int state, String incomingNumber) {
-	    	incomingCall = false;
-	    	inCall = false;
-	    	currentGesture = "NONE";
-	    }
+
+	public boolean answerCall(Context context)
+	{
+		//musicControl.pausePlayTrack();
+		try
+		{
+			// Get the boring old TelephonyManager
+			TelephonyManager telephonyManager =
+					(TelephonyManager) context.getSystemService(Context.TELEPHONY_SERVICE);
+
+			// Get the getITelephony() method
+			Class classTelephony = Class.forName(telephonyManager.getClass().getName());
+			Method methodGetITelephony = classTelephony.getDeclaredMethod("getITelephony");
+
+			// Ignore that the method is supposed to be private
+			methodGetITelephony.setAccessible(true);
+
+			// Invoke getITelephony() to get the ITelephony interface
+			Object telephonyInterface = methodGetITelephony.invoke(telephonyManager);
+
+			// Get the endCall method from ITelephony
+			Class telephonyInterfaceClass =
+					Class.forName(telephonyInterface.getClass().getName());
+			Method methodEndCall = telephonyInterfaceClass.getDeclaredMethod("answerRingingCall");
+
+			// Invoke endCall()
+			methodEndCall.invoke(telephonyInterface);
+
+			GlobalVariables.inCall = true;
+			GlobalVariables.incomingCall = false;
+
+		}
+		catch(Exception e)
+		{
+			Toast.makeText(context, e.toString(), Toast.LENGTH_LONG).show();
+			return false;
+		}
+
+
+		return true;
 	}
+
+
+	class TeleListener extends PhoneStateListener
+	{
+		public void onCallStateChanged(int state, String incomingNumber)
+		{
+			super.onCallStateChanged(state, incomingNumber);
+
+			switch(state)
+			{
+				case TelephonyManager.CALL_STATE_IDLE:
+					Toast.makeText(mContext, "CALL_STATE_IDLE", Toast.LENGTH_LONG).show();
+					break;
+
+				case TelephonyManager.CALL_STATE_OFFHOOK:
+					Toast.makeText(mContext, "CALL_STATE_OFFHOOK", Toast.LENGTH_LONG).show();
+					break;
+
+				case TelephonyManager.CALL_STATE_RINGING:
+					Toast.makeText(mContext, incomingNumber, Toast.LENGTH_LONG).show();
+					//  Toast.makeText(getApplicationContext(), "CALL_STATE_RINGING", Toast.LENGTH_LONG).show();
+
+					//musicControl.pausePlayTrack();
+					musicControl.pauseTrack();
+
+					GlobalVariables.incomingCall = true;
+					break;
+
+				default:
+
+					break;
+			}
+		}
+	}
+
+
 }
