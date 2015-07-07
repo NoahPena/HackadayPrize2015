@@ -73,7 +73,25 @@ public class BluetoothShit// extends Activity
 	public boolean bluetoothOn()
 	{
 		//GlobalVariables.mBluetoothAdapter = BluetoothAdapter.getDefaultAdapter();
-		
+
+		if(GlobalVariables.mBluetoothAdapter == null)
+		{
+			Toast.makeText(mContext, "Bluetooth Not Supported", Toast.LENGTH_LONG).show();
+			return false;
+		}
+
+		if(GlobalVariables.mBluetoothAdapter.isEnabled())
+		{
+			bluetoothEnabled = true;
+			return true;
+		}
+		else
+		{
+			Toast.makeText(mContext, "Please Turn Bluetooth On", Toast.LENGTH_LONG).show();
+			return false;
+		}
+
+		/*
 		bluetoothEnabled = true;
 		
 		if(GlobalVariables.mBluetoothAdapter == null)
@@ -91,6 +109,7 @@ public class BluetoothShit// extends Activity
 		}
 		
 		return true;
+		*/
 	}
 	
 	public boolean bluetoothOff()

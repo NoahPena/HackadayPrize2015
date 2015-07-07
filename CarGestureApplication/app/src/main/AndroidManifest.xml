@@ -16,6 +16,12 @@
         </intent-filter>
     </receiver>
 
+    <receiver android:name=".WidgetMain" android:label="Car Gesture Widget">
+        <intent-filter> <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+        </intent-filter>
+        <meta-data android:name="android.appwidget.provider" android:resource="@layout/car_gesture_widget_provider" />
+    </receiver>
+
     <application
         android:allowBackup="true"
         android:icon="@mipmap/ic_launcher"

@@ -211,11 +211,22 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     {
         if(v.getId() == R.id.quitButton)
         {
-            if(bluetooth.bluetoothOff())
-            {
+           // if(bluetooth.bluetoothOff())
+           // {
+                if(GlobalVariables.mBluetoothSocket.isConnected())
+                {
+                    try
+                    {
+                        GlobalVariables.mBluetoothSocket.close();
+                    }
+                    catch(Exception e)
+                    {
+
+                    }
+                }
                 finish();
                 System.exit(0);
-            }
+           // }
         }
         else if(v.getId() == R.id.switchButton)
         {
@@ -286,6 +297,13 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                 Toast.makeText(getApplicationContext(), e.toString(), Toast.LENGTH_LONG).show();
             }
         }
+
+        //if(GlobalVariables.mBluetoothAdapter.isEnabled())
+       // {
+        //    GlobalVariables.mBluetoothAdapter.disable();
+       // }
+
+        super.onDestroy();
     }
 
 
