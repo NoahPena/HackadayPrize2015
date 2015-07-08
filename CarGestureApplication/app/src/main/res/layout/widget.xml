@@ -1,12 +1,16 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:orientation="vertical" android:layout_width="match_parent"
-    android:layout_height="match_parent">
+<LinearLayout
+    xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="#dd55ff"
+    android:padding="0.1dp">
 
-    <ToggleButton
+    <TextView
+        android:id="@+id/widgetTextView"
+        android:text="Sup"
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        android:text="Tap To Toggle"
-        android:id="@+id/toggleButton"
-        android:layout_gravity="center_horizontal" />
+        android:layout_gravity="center_vertical"
+        android:textColor="#000000"></TextView>
 </LinearLayout>

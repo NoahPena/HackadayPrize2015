@@ -211,8 +211,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     {
         if(v.getId() == R.id.quitButton)
         {
-           // if(bluetooth.bluetoothOff())
-           // {
+            if(GlobalVariables.mBluetoothSocket != null)
+            {
                 if(GlobalVariables.mBluetoothSocket.isConnected())
                 {
                     try
@@ -224,9 +224,11 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
                     }
                 }
-                finish();
-                System.exit(0);
-           // }
+
+            }
+
+            finish();
+            System.exit(0);
         }
         else if(v.getId() == R.id.switchButton)
         {

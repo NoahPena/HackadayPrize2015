@@ -16,10 +16,11 @@
         </intent-filter>
     </receiver>
 
-    <receiver android:name=".WidgetMain" android:label="Car Gesture Widget">
-        <intent-filter> <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
+    <receiver android:name="com.pena.noah.cargestureapplication.WidgetMain" android:label="CarGestureWidget">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE"/>
         </intent-filter>
-        <meta-data android:name="android.appwidget.provider" android:resource="@layout/car_gesture_widget_provider" />
+        <meta-data android:name="android.appwidget.provider" android:resource="@xml/car_gesture_widget_provider" />
     </receiver>
 
     <application
