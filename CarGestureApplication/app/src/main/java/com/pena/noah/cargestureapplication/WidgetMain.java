@@ -1,5 +1,6 @@
 package com.pena.noah.cargestureapplication;
 
+import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
 import android.content.ComponentName;
@@ -15,7 +16,10 @@ import android.widget.RemoteViews;
 public class WidgetMain extends AppWidgetProvider
 {
     @Override
-    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds)
+    {
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
+
         Log.d("Debug", "onUpdate");
 
         final int N = appWidgetIds.length;
@@ -25,6 +29,13 @@ public class WidgetMain extends AppWidgetProvider
             int appWidgetId = appWidgetIds[i];
 
             RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.widget);
+
+            Intent intent = new Intent(context, WidgetService.class);
+            intent.setAction("nothing");
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, appWidgetId);
+            PendingIntent pendingIntent = PendingIntent.getService(context, 0, intent, 0);
+
+            views.setOnClickPendingIntent(R.id.imageButton, pendingIntent);
 
             appWidgetManager.updateAppWidget(appWidgetId, views);
         }

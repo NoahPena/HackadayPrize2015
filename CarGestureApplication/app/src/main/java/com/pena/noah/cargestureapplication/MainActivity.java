@@ -15,6 +15,7 @@ import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.Toast;
 
 import com.spotify.sdk.android.player.Spotify;
@@ -54,6 +55,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     Button quitButton;
     Button switchButton;
 
+    ImageButton imageButton;
+
     private static final String CLIENT_ID = "ea003cf31ff442b09e9be3534cb76499";
     private static final String REDIRECT_URI = "http://localhost:8888/callback";
 
@@ -64,7 +67,22 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        setContentView(R.layout.activity_main);
+        //setContentView(R.layout.activity_main);
+
+        imageButton = (ImageButton)findViewById(R.id.imageButton);
+
+        if(GlobalVariables.appOn)
+        {
+            GlobalVariables.appOn = false;
+            //imageButton.setImageResource(R.drawable.carfrontoff);
+            finish();
+            System.exit(0);
+        }
+        else
+        {
+            GlobalVariables.appOn = true;
+            //imageButton.setImageResource(R.drawable.carfronton);
+        }
 
         quitButton = (Button)findViewById(R.id.quitButton);
         switchButton = (Button)findViewById(R.id.switchButton);
@@ -288,7 +306,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     @Override
     protected void onDestroy()
     {
-        if(GlobalVariables.mBluetoothSocket.isConnected())
+
+        if(GlobalVariables.mBluetoothSocket != null && GlobalVariables.mBluetoothSocket.isConnected())
         {
             try
             {

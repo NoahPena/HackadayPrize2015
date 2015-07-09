@@ -100,4 +100,8 @@ public class GlobalVariables
     static boolean inCall = false;
     static boolean incomingCall = false;
     static TextToSpeech textToSpeech = null;
+
+    //Widget Stuff
+    static boolean appOn = false;
+
 }
