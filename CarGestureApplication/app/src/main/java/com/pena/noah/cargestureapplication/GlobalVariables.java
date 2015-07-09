@@ -103,5 +103,4 @@ public class GlobalVariables
 
     //Widget Stuff
     static boolean appOn = false;
-
 }

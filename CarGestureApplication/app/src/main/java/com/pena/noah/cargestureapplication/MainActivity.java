@@ -5,12 +5,16 @@ import java.util.List;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.BroadcastReceiver;
+import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Debug;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.view.View;
 import android.view.View.OnClickListener;
@@ -63,26 +67,25 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     private static final int REQUEST_CODE = 1337;
     private Player mPlayer = null;
 
+    private final BroadcastReceiver abcd = new BroadcastReceiver() {
+        @Override
+        public void onReceive(Context context, Intent intent)
+        {
+            Log.d("activity", this.toString());
+            System.exit(0);
+        }
+    };
+
     @Override
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
         //setContentView(R.layout.activity_main);
 
-        imageButton = (ImageButton)findViewById(R.id.imageButton);
+        registerReceiver(abcd, new IntentFilter("xyz"));
 
-        if(GlobalVariables.appOn)
-        {
-            GlobalVariables.appOn = false;
-            //imageButton.setImageResource(R.drawable.carfrontoff);
-            finish();
-            System.exit(0);
-        }
-        else
-        {
-            GlobalVariables.appOn = true;
-            //imageButton.setImageResource(R.drawable.carfronton);
-        }
+        GlobalVariables.mContext = getApplicationContext();
+        GlobalVariables.mActivity = this;
 
         quitButton = (Button)findViewById(R.id.quitButton);
         switchButton = (Button)findViewById(R.id.switchButton);
@@ -225,6 +228,7 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         //Toast.makeText(getApplicationContext(), "Playback error received: " + errorType.name(), Toast.LENGTH_LONG).show();
     }
 
+
     public void onClick(View v)
     {
         if(v.getId() == R.id.quitButton)
@@ -277,8 +281,7 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
     public boolean startBluetoothShit()
     {
-        GlobalVariables.mContext = getApplicationContext();
-        GlobalVariables.mActivity = this;
+
         bluetooth = new BluetoothShit(getApplicationContext(), this, mPlayer);
 
         if(bluetooth.bluetoothOn())
@@ -306,6 +309,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     @Override
     protected void onDestroy()
     {
+
+        unregisterReceiver(abcd);
 
         if(GlobalVariables.mBluetoothSocket != null && GlobalVariables.mBluetoothSocket.isConnected())
         {

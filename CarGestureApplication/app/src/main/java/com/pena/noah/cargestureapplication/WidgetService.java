@@ -4,6 +4,7 @@ import android.app.Service;
 import android.content.Intent;
 import android.media.Image;
 import android.os.IBinder;
+import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
 import android.widget.ImageButton;
 import android.widget.Toast;
@@ -20,14 +21,28 @@ public class WidgetService extends Service
     {
         super.onStartCommand(intent, flags, startId);
 
+
         Log.d("Debug", "onStartCommand");
 
         Toast.makeText(getApplicationContext(), "Just a test", Toast.LENGTH_SHORT).show();
 
+        if(GlobalVariables.mActivity == null)
+        {
+            Intent dialogIntent = new Intent(this, MainActivity.class);
+            dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            startActivity(dialogIntent);
+        }
+        else
+        {
+            Log.d("activity", GlobalVariables.mActivity.toString());
+            sendBroadcast(new Intent("xyz"));
+           /* LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
+                    .getInstance(GlobalVariables.mActivity);
+            localBroadcastManager.sendBroadcast(new Intent(
+                    "closeApplication"));*/
+        }
 
-        Intent dialogIntent = new Intent(this, MainActivity.class);
-        dialogIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        startActivity(dialogIntent);
+
 
 
         return 0;
