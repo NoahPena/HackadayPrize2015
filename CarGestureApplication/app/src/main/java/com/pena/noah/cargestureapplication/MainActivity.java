@@ -87,8 +87,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         GlobalVariables.mContext = getApplicationContext();
         GlobalVariables.mActivity = this;
 
-        quitButton = (Button)findViewById(R.id.quitButton);
-        switchButton = (Button)findViewById(R.id.switchButton);
+        //quitButton = (Button)findViewById(R.id.quitButton);
+        //switchButton = (Button)findViewById(R.id.switchButton);
 
         GlobalVariables.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override

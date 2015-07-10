@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="utf-8"?>
+<PreferenceScreen xmlns:android="http://schemas.android.com/apk/res/android">
+   <PreferenceCategory
+       android:title="Google Play Player"
+       android:key="google_play_player">
+       <CheckBoxPreference
+           android:icon="@drawable/google_play_music"
+           android:key="enable_google_play"
+           android:title="Enable Google Play Player"
+           android:summary="Enables Google Play Player As The Default Player"
+           android:defaultValue="true" />
+       <CheckBoxPreference
+           android:key="shuffle_music"
+           android:summary="Shuffles Tracks"
+           android:title="Track Shuffle"
+           android:defaultValue="false"
+           android:dependency="enable_google_play"/>
+   </PreferenceCategory>
+    <PreferenceCategory
+        android:title="Spotify Settings"
+        android:key="spotify_settings">
+        <CheckBoxPreference
+            android:icon="@drawable/spotify"
+            android:key="enable_spotify"
+            android:summary="Enables Spotify As The Default Player"
+            android:title="Enable Spotify"
+            android:defaultValue="false" />
+        <CheckBoxPreference
+            android:key="shuffle_music"
+            android:summary="Shuffles Music In Playlist"
+            android:title="Track Shuffle"
+            android:dependency="enable_spotify"
+            android:defaultValue="false"/>
+        <CheckBoxPreference
+            android:key="shuffle_playlist"
+            android:summary="Shuffles Playlists"
+            android:title="Playlist Shuffle"
+            android:dependency="enable_spotify"
+            android:defaultValue="false"/>
+        <EditTextPreference
+            android:key="spotify_username"
+            android:summary="Username for Spotify"
+            android:title="Spotify Username"
+            android:dependency="enable_spotify"/>
+        <EditTextPreference
+            android:key="spotify_password"
+            android:summary="Password for Spotify"
+            android:title="Spotify Password"
+            android:dependency="enable_spotify"/>
+    </PreferenceCategory>
+</PreferenceScreen>
