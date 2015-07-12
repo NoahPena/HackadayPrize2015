@@ -36,6 +36,23 @@ public class Options extends PreferenceActivity implements SharedPreferences.OnS
         spotifyEnabled = (CheckBoxPreference)findPreference("enable_spotify");
         googlePlayEnabled = (CheckBoxPreference)findPreference("enable_google_play");
 
+        if(prefs.getBoolean("enable_spotify", false))
+        {
+            spotifyEnabled.setChecked(true);
+            spotifyEnabled.setEnabled(true);
+
+            googlePlayEnabled.setChecked(false);
+            googlePlayEnabled.setEnabled(false);
+        }
+        else if(prefs.getBoolean("enable_google_play", false))
+        {
+            googlePlayEnabled.setChecked(true);
+            googlePlayEnabled.setEnabled(true);
+
+            spotifyEnabled.setChecked(false);
+            spotifyEnabled.setEnabled(false);
+        }
+
         googlePlayEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue)
             {

@@ -165,7 +165,7 @@ public class PhoneControlShit
 					}
 
 
-					GlobalVariables.textToSpeech.speak(number, TextToSpeech.QUEUE_FLUSH, null);
+					GlobalVariables.textToSpeech.speak(number + " is calling", TextToSpeech.QUEUE_FLUSH, null);
 
 					GlobalVariables.incomingCall = true;
 					break;
