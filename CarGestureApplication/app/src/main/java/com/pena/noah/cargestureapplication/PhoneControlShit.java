@@ -4,6 +4,7 @@ import java.lang.reflect.Method;
 import java.util.Locale;
 
 import android.app.Activity;
+import android.content.ActivityNotFoundException;
 import android.content.BroadcastReceiver;
 import android.content.ContentResolver;
 import android.content.Context;
@@ -13,6 +14,7 @@ import android.net.Uri;
 import android.os.Bundle;
 import android.provider.BaseColumns;
 import android.provider.ContactsContract;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.telephony.PhoneStateListener;
 import android.telephony.TelephonyManager;
@@ -38,7 +40,7 @@ public class PhoneControlShit
 
 		musicControl = new MusicControlShit(mContext, mActivity);
 
-		GlobalVariables.telephoneManager = (TelephonyManager)mActivity.getSystemService(Context.TELEPHONY_SERVICE);
+		GlobalVariables.telephoneManager = (TelephonyManager) mActivity.getSystemService(Context.TELEPHONY_SERVICE);
 		GlobalVariables.telephoneManager.listen(new TeleListener(), PhoneStateListener.LISTEN_CALL_STATE);
 
 	}
@@ -77,7 +79,7 @@ public class PhoneControlShit
 		catch (Exception ex)
 		{
 			// Many things can go wrong with reflection calls
-			Log.d("DEBUG","PhoneStateReceiver **" + ex.toString());
+			Log.d("DEBUG", "PhoneStateReceiver **" + ex.toString());
 			return false;
 		}
 
@@ -89,7 +91,7 @@ public class PhoneControlShit
 
 		Intent buttonUp = new Intent(Intent.ACTION_MEDIA_BUTTON);
 		buttonUp.putExtra(Intent.EXTRA_KEY_EVENT,
-				new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK));
+						  new KeyEvent(KeyEvent.ACTION_UP, KeyEvent.KEYCODE_HEADSETHOOK));
 		context.sendOrderedBroadcast(buttonUp, "android.permission.CALL_PRIVILEGED");
 
 		GlobalVariables.inCall = true;
@@ -98,22 +100,28 @@ public class PhoneControlShit
 		return true;
 	}
 
-	public String getContactDisplayNameByNumber(String number) {
+	public String getContactDisplayNameByNumber(String number)
+	{
 		Uri uri = Uri.withAppendedPath(ContactsContract.PhoneLookup.CONTENT_FILTER_URI, Uri.encode(number));
 		String name = "?";
 
 		ContentResolver contentResolver = mContext.getContentResolver();
-		Cursor contactLookup = contentResolver.query(uri, new String[] {BaseColumns._ID,
-				ContactsContract.PhoneLookup.DISPLAY_NAME }, null, null, null);
+		Cursor contactLookup = contentResolver.query(uri, new String[]{BaseColumns._ID,
+				ContactsContract.PhoneLookup.DISPLAY_NAME}, null, null, null);
 
-		try {
-			if (contactLookup != null && contactLookup.getCount() > 0) {
+		try
+		{
+			if (contactLookup != null && contactLookup.getCount() > 0)
+			{
 				contactLookup.moveToNext();
 				name = contactLookup.getString(contactLookup.getColumnIndex(ContactsContract.Data.DISPLAY_NAME));
 				//String contactId = contactLookup.getString(contactLookup.getColumnIndex(BaseColumns._ID));
 			}
-		} finally {
-			if (contactLookup != null) {
+		}
+		finally
+		{
+			if (contactLookup != null)
+			{
 				contactLookup.close();
 			}
 		}
@@ -125,14 +133,33 @@ public class PhoneControlShit
 	{
 		String spacedOut = "";
 
-		for(int i = 0; i < number.length(); i++)
+		for (int i = 0; i < number.length(); i++)
 		{
 			spacedOut += number.charAt(i) + " ";
 		}
 
 		return spacedOut;
 	}
+	private final int REQ_CODE_SPEECH_INPUT = 100;
 
+
+	public void promptSpeechInput(int code)
+	{
+		musicControl.pauseTrack();
+		Intent intent = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+						RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+		intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE, Locale.getDefault());
+		//intent.putExtra(RecognizerIntent.EXTRA_PROMPT,
+	//					getString(R.string.speech_prompt));
+		try {
+			GlobalVariables.mActivity.startActivityForResult(intent, code);
+		} catch (ActivityNotFoundException a) {
+			Toast.makeText(GlobalVariables.mContext,
+						   "Not Supported",//getString(R.string.speech_not_supported),
+						   Toast.LENGTH_SHORT).show();
+		}
+	}
 
 	class TeleListener extends PhoneStateListener
 	{
@@ -158,6 +185,7 @@ public class PhoneControlShit
 					musicControl.pauseTrack();
 
 					number = getContactDisplayNameByNumber(incomingNumber);
+
 
 					if(number == null)
 					{

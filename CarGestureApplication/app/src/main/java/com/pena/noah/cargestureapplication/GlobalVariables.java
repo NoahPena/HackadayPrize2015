@@ -5,7 +5,12 @@ import android.bluetooth.BluetoothAdapter;
 import android.bluetooth.BluetoothDevice;
 import android.bluetooth.BluetoothSocket;
 import android.content.Context;
+import android.content.Intent;
 import android.content.SharedPreferences;
+import android.database.Cursor;
+import android.net.Uri;
+import android.os.Debug;
+import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
 import android.telephony.TelephonyManager;
 import android.util.Log;
@@ -91,6 +96,113 @@ public class GlobalVariables
 
     }
 
+    static ArrayList<String> names = null;
+    static ArrayList<String> numbers = null;
+
+    private static String lookupContacts(String name)
+    {
+        //Uri lkup = Uri.withAppendedPath(ContactsContract.Contacts.CONTENT_FILTER_URI, name);
+        Uri umm = Uri.withAppendedPath(ContactsContract.CommonDataKinds.Phone.CONTENT_FILTER_URI, name);
+        Cursor idCursor = mActivity.getContentResolver().query(umm, null, null, null, null);
+        //Cursor idCursor = mActivity.getContentResolver().query(lkup, null, null, null, null);
+
+        Log.d("Debug", "Count: " + idCursor.getColumnCount());
+
+        names = new ArrayList<String>();
+        numbers = new ArrayList<String>();
+
+        while(idCursor.moveToNext())
+        {
+            String tempName = idCursor.getString(idCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME));
+            //String tempName = idCursor.getString(idCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
+
+            Log.d("Debug", "Name: " + tempName);
+
+            if(name.equalsIgnoreCase(tempName) || tempName.contains(name))
+            {
+                String temp = idCursor.getString(idCursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER));
+                Log.d("Debug", "Number: " + temp);
+
+                names.add(tempName);
+                numbers.add(temp);
+                //return temp;
+            }
+        }
+
+        if(names.size() > 1)
+        {
+            String saying = "Call";
+
+            for(int i = 0; i < names.size(); i++)
+            {
+                saying += " " + names.get(i) + " or";
+            }
+            saying = saying.substring(0, saying.length() - 3);
+
+            if(textToSpeech != null)
+            {
+                textToSpeech.speak(saying, TextToSpeech.QUEUE_FLUSH, null);
+                while(textToSpeech.isSpeaking());
+
+                PhoneControlShit phoneControlShit = new PhoneControlShit(mContext, mActivity);
+                phoneControlShit.promptSpeechInput(101);
+            }
+
+            return null;
+        }
+        else if(names.size() == 1)
+        {
+            return numbers.get(0);
+        }
+        else
+        {
+            Toast.makeText(mContext, "Could Not Find Contact", Toast.LENGTH_LONG).show();
+            if (textToSpeech != null)
+            {
+                textToSpeech.speak("Could Not Find " + name, TextToSpeech.QUEUE_FLUSH, null);
+                while(textToSpeech.isSpeaking());
+            }
+
+            MusicControlShit dumb = new MusicControlShit(mContext, mActivity, mPlayer);
+            dumb.resumeTrack();
+
+            return null;
+        }
+    }
+
+    public static void makeCall(String name, boolean secondTime)
+    {
+        String number;
+        if(!secondTime)
+        {
+            number = lookupContacts(name);
+        }
+        else
+        {
+            int index = names.indexOf(name);
+            if(index == -1)
+            {
+                   textToSpeech.speak("Could Not Find " + name, TextToSpeech.QUEUE_FLUSH, null);
+                   while(textToSpeech.isSpeaking());
+                    return;
+            }
+            else
+            {
+                number = numbers.get(index);
+            }
+        }
+
+        if(number != null)
+        {
+            inCall = true;
+            Intent intent = new Intent(Intent.ACTION_CALL);
+
+            intent.setData(Uri.parse("tel:" + number));
+            intent.setFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            mContext.startActivity(intent);
+        }
+    }
+
     public static void getUserPlaylists()
     {
         spotifyService.getPlaylists(user.id, new Callback<Pager<PlaylistSimple>>() {
@@ -127,12 +239,14 @@ public class GlobalVariables
     static BluetoothAdapter mBluetoothAdapter = null;
     static BluetoothDevice mBluetoothDevice = null;
     static BluetoothSocket mBluetoothSocket = null;
+    static int downGestureSuccession = 0;
 
     //Phone Stuff
     static TelephonyManager telephoneManager = null;
     static boolean inCall = false;
     static boolean incomingCall = false;
     static TextToSpeech textToSpeech = null;
+    static String bestChoice = null;
 
     //Widget Stuff
     static boolean appOn = false;

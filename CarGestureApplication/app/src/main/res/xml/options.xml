@@ -14,7 +14,7 @@
             android:summary="Enables App to Send Phone Calls"
             android:title="Enable Call Sending"
             android:defaultValue="false"
-            android:enabled="false"
+            android:enabled="true"
             android:icon="@drawable/phone_call_send" />
     </PreferenceCategory>
        <PreferenceCategory

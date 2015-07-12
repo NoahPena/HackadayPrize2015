@@ -16,6 +16,7 @@ import android.preference.Preference;
 import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
+import android.speech.RecognizerIntent;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.LocalBroadcastManager;
 import android.util.Log;
@@ -232,6 +233,22 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                         //Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
                     }
                 });
+            }
+        }
+        else if(requestCode == 100)
+        {
+            if(resultCode == RESULT_OK && null != intent)
+            {
+                GlobalVariables.bestChoice = intent.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
+                GlobalVariables.makeCall(GlobalVariables.bestChoice, false);
+            }
+        }
+        else if(requestCode == 101)
+        {
+            if(resultCode == RESULT_OK && null != intent)
+            {
+                GlobalVariables.bestChoice = intent.getStringArrayListExtra(RecognizerIntent.EXTRA_RESULTS).get(0);
+                GlobalVariables.makeCall(GlobalVariables.bestChoice, true);
             }
         }
 

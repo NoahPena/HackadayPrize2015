@@ -203,6 +203,7 @@ public class BluetoothShit// extends Activity
 	                                    				musicControl.skipTrack();
 														Toast.makeText(mContext, "Skip Track", Toast.LENGTH_SHORT).show();
 	                                    			}
+													GlobalVariables.downGestureSuccession = 0;
 	                                    		break;
 	                                    		
 	                                    	case "LEFT":
@@ -220,6 +221,7 @@ public class BluetoothShit// extends Activity
 	                                    				musicControl.lastTrack();
 														Toast.makeText(mContext, "Last Track", Toast.LENGTH_SHORT).show();
 	                                    			}
+													GlobalVariables.downGestureSuccession = 0;
 	                                    		break;
 	                                    		
 	                                    	case "NEAR":
@@ -237,6 +239,7 @@ public class BluetoothShit// extends Activity
 														Toast.makeText(mContext, "Pause/Play Track", Toast.LENGTH_SHORT).show();
 
 	                                    			}
+													GlobalVariables.downGestureSuccession = 0;
 	                                    		break;
 	                                    		
 	                                    	case "DOWN":
@@ -255,6 +258,16 @@ public class BluetoothShit// extends Activity
 	                                    			{
 	                                    				//nothing
 	                                    			}
+													else if(GlobalVariables.callSending)
+													{
+														GlobalVariables.downGestureSuccession++;
+
+														if(GlobalVariables.downGestureSuccession == 2)
+														{
+															GlobalVariables.downGestureSuccession = 0;
+															phoneControl.promptSpeechInput(100);
+														}
+													}
 	                                    			else
 	                                    			{
 	                                    				//nothing
@@ -279,7 +292,8 @@ public class BluetoothShit// extends Activity
 												{
 													//nothing
 												}
-												break;
+												GlobalVariables.downGestureSuccession = 0;
+											break;
 
 											case "FAR":
 												if(GlobalVariables.inCall && GlobalVariables.callReceiving)
@@ -294,8 +308,8 @@ public class BluetoothShit// extends Activity
 												{
 
 												}
-
-												break;
+												GlobalVariables.downGestureSuccession = 0;
+											break;
 
 
 	                                    	default:
