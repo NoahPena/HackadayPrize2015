@@ -189,11 +189,11 @@ public class BluetoothShit// extends Activity
 	                                    	switch(data.trim())
 	                                    	{
 	                                    	case "RIGHT":
-	                                    			if(GlobalVariables.inCall)
+	                                    			if(GlobalVariables.inCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				//nothing
 	                                    			}
-	                                    			else if(GlobalVariables.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
 	                                    			{
 														phoneControl.answerCall(mContext);
 	                                    				//phoneControl.currentGesture = "RIGHT";
@@ -206,11 +206,11 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "LEFT":
-	                                    			if(GlobalVariables.inCall)
+	                                    			if(GlobalVariables.inCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				phoneControl.killCall(mContext);
 	                                    			}
-	                                    			else if(GlobalVariables.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
 	                                    			{
 														phoneControl.killCall(mContext);
 	                                    				//phoneControl.currentGesture = "LEFT";
@@ -223,11 +223,11 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "NEAR":
-	                                    			if(GlobalVariables.inCall)
+	                                    			if(GlobalVariables.inCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				//nothing
 	                                    			}
-	                                    			else if(GlobalVariables.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				//nothing
 	                                    			}
@@ -240,7 +240,7 @@ public class BluetoothShit// extends Activity
 	                                    		break;
 	                                    		
 	                                    	case "DOWN":
-	                                    			if(GlobalVariables.inCall)
+	                                    			if(GlobalVariables.inCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				if(GlobalVariables.telephoneManager != null)
 	                                    				{
@@ -251,7 +251,7 @@ public class BluetoothShit// extends Activity
 	                                    					Toast.makeText(mContext, "ERROR", Toast.LENGTH_LONG).show();
 	                                    				}
 	                                    			}
-	                                    			else if(GlobalVariables.incomingCall)
+	                                    			else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
 	                                    			{
 	                                    				//nothing
 	                                    			}
@@ -262,12 +262,42 @@ public class BluetoothShit// extends Activity
 											break;
 
 											case "UP":
-												musicControl.nextPlaylist();
-												Toast.makeText(mContext, "Next Playlist", Toast.LENGTH_SHORT).show();
+												if(GlobalVariables.inCall && GlobalVariables.callReceiving)
+												{
+
+												}
+												else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
+												{
+
+												}
+												else if(GlobalVariables.useSpotify)
+												{
+													musicControl.nextPlaylist();
+													Toast.makeText(mContext, "Next Playlist", Toast.LENGTH_SHORT).show();
+												}
+												else
+												{
+													//nothing
+												}
 												break;
 
-	                                    			
-	                                    		
+											case "FAR":
+												if(GlobalVariables.inCall && GlobalVariables.callReceiving)
+												{
+
+												}
+												else if(GlobalVariables.incomingCall && GlobalVariables.callReceiving)
+												{
+
+												}
+												else
+												{
+
+												}
+
+												break;
+
+
 	                                    	default:
 	                                    		Toast.makeText(mContext, data, Toast.LENGTH_SHORT).show();
 	                                    		break;

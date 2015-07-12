@@ -22,6 +22,7 @@ public class WidgetService extends Service
         super.onStartCommand(intent, flags, startId);
 
 
+
         Log.d("Debug", "onStartCommand");
 
         Toast.makeText(getApplicationContext(), "Just a test", Toast.LENGTH_SHORT).show();
@@ -35,6 +36,7 @@ public class WidgetService extends Service
         else
         {
             Log.d("activity", GlobalVariables.mActivity.toString());
+           // GlobalVariables.mActivity.finish();
             sendBroadcast(new Intent("xyz"));
            /* LocalBroadcastManager localBroadcastManager = LocalBroadcastManager
                     .getInstance(GlobalVariables.mActivity);
@@ -42,10 +44,7 @@ public class WidgetService extends Service
                     "closeApplication"));*/
         }
 
-
-
-
-        return 0;
+        return START_NOT_STICKY;
     }
 
     @Override

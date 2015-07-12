@@ -1,6 +1,7 @@
 package com.pena.noah.cargestureapplication;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 
@@ -11,6 +12,8 @@ import android.content.Intent;
 import android.content.IntentFilter;
 import android.os.Bundle;
 import android.os.Debug;
+import android.preference.Preference;
+import android.preference.PreferenceManager;
 import android.provider.MediaStore;
 import android.provider.Settings;
 import android.speech.tts.TextToSpeech;
@@ -80,7 +83,9 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
     protected void onCreate(Bundle savedInstanceState)
     {
         super.onCreate(savedInstanceState);
-        //setContentView(R.layout.activity_main);
+        setContentView(R.layout.activity_main);
+
+        getSettings();
 
         registerReceiver(abcd, new IntentFilter("xyz"));
 
@@ -90,29 +95,39 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         //quitButton = (Button)findViewById(R.id.quitButton);
         //switchButton = (Button)findViewById(R.id.switchButton);
 
-        GlobalVariables.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if(status != TextToSpeech.ERROR) {
-                    GlobalVariables.textToSpeech.setLanguage(Locale.US);
 
 
+        if(GlobalVariables.callReceiving || GlobalVariables.callSending)
+        {
+            GlobalVariables.textToSpeech = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener()
+            {
+                @Override
+                public void onInit(int status) {
+                    if (status != TextToSpeech.ERROR)
+                    {
+                        GlobalVariables.textToSpeech.setLanguage(Locale.US);
+                    }
                 }
+            });
+        }
+
+
+        if(GlobalVariables.useSpotify)
+        {
+            try
+            {
+                AuthenticationRequest.Builder builder =
+                        new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
+                builder.setScopes(new String[]{"user-read-private", "streaming"});
+                AuthenticationRequest request = builder.build();
+
+                AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
             }
-        });
-
-        try
-        {
-            AuthenticationRequest.Builder builder =
-                    new AuthenticationRequest.Builder(CLIENT_ID, AuthenticationResponse.Type.TOKEN, REDIRECT_URI);
-            builder.setScopes(new String[]{"user-read-private", "streaming"});
-            AuthenticationRequest request = builder.build();
-
-            AuthenticationClient.openLoginActivity(this, REQUEST_CODE, request);
-        } catch(Exception e)
-        {
-            Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
-            Log.d("DEBUG", e.getMessage());
+            catch (Exception e)
+            {
+                Toast.makeText(getApplicationContext(), e.getMessage(), Toast.LENGTH_LONG).show();
+                Log.d("DEBUG", e.getMessage());
+            }
         }
 
         //while(!startBluetoothShit());
@@ -120,12 +135,38 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
         startBluetoothShit();
     }
 
+    private void getSettings()
+    {
+        GlobalVariables.prefs = PreferenceManager.getDefaultSharedPreferences(getBaseContext());
+        GlobalVariables.editor = GlobalVariables.prefs.edit();
+
+        GlobalVariables.useSpotify = GlobalVariables.prefs.getBoolean("enable_spotify", false);
+
+        if(GlobalVariables.useSpotify)
+        {
+            GlobalVariables.spotifyPlaylistShuffle = GlobalVariables.prefs.getBoolean("shuffle_playlist", false);
+            GlobalVariables.spotifyTrackShuffle = GlobalVariables.prefs.getBoolean("shuffle_music", false);
+        }
+        else
+        {
+            GlobalVariables.defaultTrackShuffle = GlobalVariables.prefs.getBoolean("shuffle_music", false);
+        }
+
+        GlobalVariables.spotifyPlaylists = new ArrayList<Integer>();
+        GlobalVariables.spotifyTracks = new ArrayList<Integer>();
+        GlobalVariables.defaultTracks = new ArrayList<Integer>();
+
+        GlobalVariables.callSending = GlobalVariables.prefs.getBoolean("enable_send_calls", false);
+        GlobalVariables.callReceiving = GlobalVariables.prefs.getBoolean("enable_receive_calls", false);
+    }
+
     @Override
     protected void onActivityResult(int requestCode, int resultCode, Intent intent) {
         super.onActivityResult(requestCode, resultCode, intent);
 
         // Check if result comes from the correct activity
-        if (requestCode == REQUEST_CODE) {
+        if (requestCode == REQUEST_CODE)
+        {
             final AuthenticationResponse response = AuthenticationClient.getResponse(resultCode, intent);
             if (response.getType() == AuthenticationResponse.Type.TOKEN) {
                 final Config playerConfig = new Config(this, response.getAccessToken(), CLIENT_ID);
@@ -135,6 +176,10 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                     {
                         mPlayer.addConnectionStateCallback(MainActivity.this);
                         mPlayer.addPlayerNotificationCallback(MainActivity.this);
+
+
+
+                        mPlayer.setRepeat(true);
                        // mPlayer.play("spotify:user:1255218042:playlist:3AFfiVdHxZoqVlS6x7KIgl");
 
                         //String userID = "1255218042";
@@ -164,6 +209,8 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                             @Override
                             public void failure(RetrofitError error) {
                                 Log.d("Debug", "nein nein nein nein nein");
+                                GlobalVariables.useSpotify = false;
+                                Toast.makeText(getApplicationContext(), "Could Not Connect To Spotify Network", Toast.LENGTH_LONG).show();
                             }
                         });
 
@@ -171,7 +218,9 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
 
                         GlobalVariables.mPlayer = mPlayer;
 
-                        GlobalVariables.useSpotify = true;
+
+
+                        //GlobalVariables.useSpotify = true;
                     }
 
                     @Override
@@ -179,11 +228,14 @@ public class MainActivity extends Activity implements OnClickListener, PlayerNot
                     {
                         Toast.makeText(getApplicationContext(), "Could not initialize player: " + throwable.getMessage(), Toast.LENGTH_LONG).show();
                         Log.d("Spotify", "Could not initialize player: " + throwable.getMessage());
+                        GlobalVariables.useSpotify = false;
                         //Log.e("MainActivity", "Could not initialize player: " + throwable.getMessage());
                     }
                 });
             }
         }
+
+
     }
 
     @Override

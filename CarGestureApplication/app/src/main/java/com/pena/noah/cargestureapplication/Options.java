@@ -12,13 +12,18 @@ import android.util.Log;
 /**
  * Created by Noah on 7/9/2015.
  */
-public class Options extends PreferenceActivity
+public class Options extends PreferenceActivity implements SharedPreferences.OnSharedPreferenceChangeListener
 {
     private CheckBoxPreference spotifyEnabled;
     private CheckBoxPreference googlePlayEnabled;
 
     private SharedPreferences prefs;
     private SharedPreferences.Editor editor;
+
+    public void onSharedPreferenceChanged(SharedPreferences arg0, String key)
+    {
+
+    }
 
     protected void onCreate(Bundle bundledInstance)
     {
@@ -31,20 +36,25 @@ public class Options extends PreferenceActivity
         spotifyEnabled = (CheckBoxPreference)findPreference("enable_spotify");
         googlePlayEnabled = (CheckBoxPreference)findPreference("enable_google_play");
 
-        /*googlePlayEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
+        googlePlayEnabled.setOnPreferenceChangeListener(new Preference.OnPreferenceChangeListener() {
             public boolean onPreferenceChange(Preference preference, Object newValue)
             {
                 Log.d("Debug", "Google Play Player: " + newValue.toString());
-               if(!(boolean)newValue)
-               {
-                   spotifyEnabled.setEnabled(true);
-                   googlePlayEnabled.setEnabled(false);
+                if(!(boolean)newValue)
+                {
+                    spotifyEnabled.setEnabled(true);
+                    spotifyEnabled.setChecked(true);
+                    googlePlayEnabled.setEnabled(false);
+                    googlePlayEnabled.setChecked(false);
 
-                   editor.putBoolean("enable_spotify", true);
-                   editor.putBoolean("enable_google_play", false);
-                   editor.commit();
-               }
-                return false;
+                    editor.putBoolean("enable_spotify", true);
+                    editor.putBoolean("enable_google_play", false);
+                    editor.commit();
+                }
+
+                //setPreferenceScreen(null);
+                //addPreferencesFromResource(R.xml.options);
+                return true;
             }
         });
 
@@ -56,16 +66,22 @@ public class Options extends PreferenceActivity
                 if(!(boolean)newValue)
                 {
                     googlePlayEnabled.setEnabled(true);
+                    googlePlayEnabled.setChecked(true);
                     spotifyEnabled.setEnabled(false);
+                    spotifyEnabled.setChecked(false);
 
                     editor.putBoolean("enable_spotify", false);
                     editor.putBoolean("enable_google_play", true);
                     editor.commit();
                 }
-                return false;
+
+                //setPreferenceScreen(null);
+                //addPreferencesFromResource(R.xml.options);
+                return true;
             }
         });
-        */
+
+        prefs.registerOnSharedPreferenceChangeListener(this);
     }
 
 }
