@@ -12,6 +12,7 @@ import android.net.Uri;
 import android.os.Debug;
 import android.provider.ContactsContract;
 import android.speech.tts.TextToSpeech;
+import android.speech.tts.UtteranceProgressListener;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.widget.Toast;
@@ -117,6 +118,7 @@ public class GlobalVariables
             //String tempName = idCursor.getString(idCursor.getColumnIndex(ContactsContract.Contacts.DISPLAY_NAME));
 
             Log.d("Debug", "Name: " + tempName);
+            tempName = tempName.toLowerCase();
 
             if(name.equalsIgnoreCase(tempName) || tempName.contains(name))
             {
@@ -142,6 +144,34 @@ public class GlobalVariables
             if(textToSpeech != null)
             {
                 textToSpeech.speak(saying, TextToSpeech.QUEUE_FLUSH, null);
+              /*  textToSpeech.setOnUtteranceProgressListener(new UtteranceProgressListener()
+                {
+                    @Override
+                    public void onStart(String utteranceId)
+                    {
+
+                    }
+
+                    @Override
+                    public void onDone(String utteranceId)
+                    {
+                        mActivity.runOnUiThread(new Runnable()
+                        {
+                            @Override
+                            public void run()
+                            {
+
+                            }
+                        });
+                    }
+
+                    @Override
+                    public void onError(String utteranceId)
+                    {
+
+                    }
+                });
+                */
                 while(textToSpeech.isSpeaking());
 
                 PhoneControlShit phoneControlShit = new PhoneControlShit(mContext, mActivity);
@@ -172,6 +202,8 @@ public class GlobalVariables
 
     public static void makeCall(String name, boolean secondTime)
     {
+        name = name.toLowerCase();
+        Log.d("Debug", "Intitial Name: " + name);
         String number;
         if(!secondTime)
         {
